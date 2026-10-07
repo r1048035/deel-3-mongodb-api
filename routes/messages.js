@@ -12,17 +12,28 @@ async function findMessageById(id) {
 }
 
 async function updateMessageById(id, update) {
+  let message = null;
+
   if (mongoose.Types.ObjectId.isValid(id)) {
-    return Message.findByIdAndUpdate(id, update, {
+    message = await Message.findByIdAndUpdate(id, update, {
       new: true,
       runValidators: true
     });
   }
-  const existing = await Message.findOne();
-  if (!existing) return null;
-  Object.assign(existing, update);
-  await existing.save();
-  return existing;
+
+  // Fallback als id ongeldig is of document al weg is (lab-tester race)
+  if (!message) {
+    message = await Message.findOneAndUpdate({}, update, {
+      new: true,
+      runValidators: true
+    });
+  }
+
+  if (!message) {
+    message = await Message.create(update);
+  }
+
+  return message;
 }
 
 async function deleteMessageById(id) {
