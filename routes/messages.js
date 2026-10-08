@@ -102,7 +102,9 @@ router.get('/:id', async (req, res) => {
 // POST /api/v1/messages
 router.post('/', async (req, res) => {
   try {
-    const { user, text } = req.body.message;
+    // Lab-tester / spreadsheet sturen soms nested of plat body
+    const payload = req.body.message || req.body;
+    const { user, text } = payload;
 
     const message = await Message.create({ user, text });
 
