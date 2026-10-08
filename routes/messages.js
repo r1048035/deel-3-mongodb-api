@@ -108,7 +108,8 @@ router.post('/', async (req, res) => {
 
     const message = await Message.create({ user, text });
 
-    res.status(201).json({
+    // Spreadsheet checkt HTTP 200 (niet 201 Created)
+    res.status(200).json({
       status: 'success',
       message: 'Message saved',
       data: { message }
